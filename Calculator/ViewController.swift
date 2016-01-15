@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Darwin
 
 class ViewController: UIViewController {
     
@@ -23,6 +24,7 @@ class ViewController: UIViewController {
             userIsInTheMiddleOfTypingANumber = false
         } // end of set
     } // end of displayValue
+    let pi = M_PI // PI
     
     // DIGITS PRESSED
     @IBAction func appendDigit(sender: UIButton) {
@@ -51,14 +53,22 @@ class ViewController: UIViewController {
             enter()
         }
         switch operation {
+            // BASIC OPERATIONS
             case "✖️": performOperations{ $0 * $1 }
             case "➗": performOperations{ $1 / $0 }
             case "➖": performOperations{ $1 - $0 }
             case "➕": performOperations{ $0 + $1 }
-            case "✔️": performOperation{ sqrt($0) }
+            // EXTRA OPERATIONS
+            case "✔️":  performOperation{ sqrt($0) }
+            case "sin": performOperation{ sin($0) }
+            case "cos": performOperation{ cos($0) }
+            case "π":   performOperation{ self.pi * $0 }
+            // CLEAR CASE
+            case "C": displayValue = 0
+                      operandStack.removeAll()
             default:   break
-        }
-    }
+        } // end switch
+    } // end funct
     
     // Perform operation
     func performOperations(operation: (Double, Double) -> Double){
@@ -75,6 +85,11 @@ class ViewController: UIViewController {
             enter()
         } // end if
     } // end funct
+    
+    // Add decimal point 
+    func decimalPointValue(){
+        
+    } // end funct 
     
 } // end of class
 
