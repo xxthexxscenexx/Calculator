@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Calculator
+//  Calculator Controller MVC
 //
 //  Created by Rosie  on 1/14/16.
 //  Copyright © 2016 Rosie . All rights reserved.
@@ -14,8 +14,7 @@ class ViewController: UIViewController {
     // VARIABLES
     @IBOutlet weak var display: UILabel! // Display label
     var userIsInTheMiddleOfTypingANumber: Bool = false // Is the user typing a new number?
-    var operandStack = Array<Double>()
-    var displayValue: Double{
+        var displayValue: Double{
         get {
             return NSNumberFormatter().numberFromString(display.text!)!.doubleValue // Look up meaning
         } // end of get
@@ -24,7 +23,7 @@ class ViewController: UIViewController {
             userIsInTheMiddleOfTypingANumber = false
         } // end of set
     } // end of displayValue
-    let pi = M_PI // PI
+    var brain = CalculatorBrain() // model
     
     // DIGITS PRESSED
     @IBAction func appendDigit(sender: UIButton) {
@@ -42,58 +41,26 @@ class ViewController: UIViewController {
     // ENTER BUTTON appends values onto the stack 
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
-        operandStack.append(displayValue)
-        print("\(operandStack)")
+        if let result = brain.pushOperand(displayValue){ // push value onto stack
+            displayValue = result
+        } else {
+            displayValue = 0 // change to display value = nil or error when change display value to be optional
+        }
     } // end of funct
     
     // OPERATIONS
     @IBAction func operate(sender: UIButton) {
-        let operation = sender.currentTitle!
         if userIsInTheMiddleOfTypingANumber {
             enter()
-        }
-        switch operation {
-            // BASIC OPERATIONS
-            case "✖️": performOperations{ $0 * $1 }
-            case "➗": performOperations{ $1 / $0 }
-            case "➖": performOperations{ $1 - $0 }
-            case "➕": performOperations{ $0 + $1 }
-            // EXTRA OPERATIONS
-            case "✔️":  performOperation{ sqrt($0) }
-            case "sin": performOperation{ sin($0) }
-            case "cos": performOperation{ cos($0) }
-            case "π":   performOperation{ self.pi * $0 }
-            case ".":   createDouble { $0 }
-            // CLEAR CASE
-            case "C": displayValue = 0
-                      operandStack.removeAll()
-            default:   break
-        } // end switch
-    } // end funct
-    
-    // PERFORM OPERATION TWO VARIABLES
-    func performOperations(operation: (Double, Double) -> Double){
-        if operandStack.count >= 2 {
-            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
-            enter()
         } // end if
-    } // end funct
-
-    // PERFORM OPERATION ONE VARIABLE
-    func performOperation(operation: Double -> Double){
-        if operandStack.count >= 1 {
-            displayValue = operation(operandStack.removeLast())
-            enter()
+        if let operation = sender.currentTitle{
+            if let result = brain.performOperation(operation){
+                displayValue = result
+            } else {
+                displayValue = 0 // change to display value = nil or error when change display value to be optional
+            } // end if else
         } // end if
-    } // end funct
-    
-    // CREATE DOUBLE
-    func createDouble(operation: Double -> Double){
-        if operandStack.count >= 1 {
-            
-            displayValue = operation(operandStack.removeLast())
-            enter()
-        } // end if
+        
     } // end funct
     
 } // end of class
