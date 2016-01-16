@@ -11,21 +11,38 @@ import Foundation
 class CalculatorBrain{
     
     // VARIABLES
-    private enum Ops {
+    private enum Ops: CustomStringConvertible { // Protocol description returns a string
         case Operand (Double)
         case UnaryOperation (String, Double -> Double)
         case BinaryOperation (String, (Double, Double) -> Double)
+        var description: String{ // String prints
+            get{
+                switch self {
+                case .Operand(let operand):
+                    return "\(operand)"
+                case .UnaryOperation(let sym, _):
+                    return sym
+                case .BinaryOperation(let symbol, _):
+                    return symbol
+                } // end switch
+            } // end get
+        } // end desc
     } // end enum
     
     private var opStack = [Ops]() // An array of type Ops
     
     private var knownOps = [String:Ops]() // Dictionary
     init(){
-        knownOps["➕"] = Ops.BinaryOperation("➕", +)
-        knownOps["➖"] = Ops.BinaryOperation("➖") {$1 - $0}
-        knownOps["➗"] = Ops.BinaryOperation("➗") {$1 / $0}
-        knownOps["✖️"] = Ops.BinaryOperation("✖️", *)
-        knownOps["✔️"] = Ops.UnaryOperation("✔️", sqrt)
+        
+        func learnOp(op: Ops){
+            knownOps[op.description] = op
+        }
+        
+        learnOp(Ops.BinaryOperation("➕", +))
+        learnOp(Ops.BinaryOperation("➖") {$1 - $0})
+        learnOp(Ops.BinaryOperation("➗") {$1 / $0})
+        learnOp(Ops.BinaryOperation("✖️", *))
+        learnOp(Ops.UnaryOperation("✔️", sqrt)) 
     } // end init
     
     // RECURSIVE METHOD TO PULL OPS OFF STACK
@@ -57,7 +74,8 @@ class CalculatorBrain{
     } // end fuct
     
     func evaluate() -> Double? { // Double is an optional to return nil if needed
-        let (result, _) = evaluate(opStack) // Tuple equal to result from the recursive method 
+        let (result, remainder) = evaluate(opStack) // Tuple equal to result from the recursive method
+        print("\(opStack) = \(result) with \(remainder) left over")
         return result
     } // end funct
     
@@ -68,10 +86,11 @@ class CalculatorBrain{
     } // end funct
     
     // PUSH OPERATION ON STACK
-    func performOperation(symbol: String){
+    func performOperation(symbol: String) -> Double?{
         if let operation = knownOps[symbol]{ // looks up symbol in dictionary
             opStack.append(operation)
         } // end if
+        return evaluate()
     } // end funct
     
 } // end class

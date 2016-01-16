@@ -53,14 +53,14 @@ class ViewController: UIViewController {
         if userIsInTheMiddleOfTypingANumber {
             enter()
         } // end if
-        if let operation = sender.currentTitle{
+        
+        if let operation = sender.currentTitle {
             if let result = brain.performOperation(operation){
                 displayValue = result
             } else {
                 displayValue = 0 // change to display value = nil or error when change display value to be optional
             } // end if else
         } // end if
-        
     } // end funct
     
 } // end of class
