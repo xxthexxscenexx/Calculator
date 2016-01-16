@@ -63,6 +63,7 @@ class ViewController: UIViewController {
             case "sin": performOperation{ sin($0) }
             case "cos": performOperation{ cos($0) }
             case "π":   performOperation{ self.pi * $0 }
+            case ".":   createDouble { $0 }
             // CLEAR CASE
             case "C": displayValue = 0
                       operandStack.removeAll()
@@ -70,7 +71,7 @@ class ViewController: UIViewController {
         } // end switch
     } // end funct
     
-    // Perform operation
+    // PERFORM OPERATION TWO VARIABLES
     func performOperations(operation: (Double, Double) -> Double){
         if operandStack.count >= 2 {
             displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
@@ -78,7 +79,7 @@ class ViewController: UIViewController {
         } // end if
     } // end funct
 
-    // Perform operation
+    // PERFORM OPERATION ONE VARIABLE
     func performOperation(operation: Double -> Double){
         if operandStack.count >= 1 {
             displayValue = operation(operandStack.removeLast())
@@ -86,10 +87,14 @@ class ViewController: UIViewController {
         } // end if
     } // end funct
     
-    // Add decimal point 
-    func decimalPointValue(){
-        
-    } // end funct 
+    // CREATE DOUBLE
+    func createDouble(operation: Double -> Double){
+        if operandStack.count >= 1 {
+            
+            displayValue = operation(operandStack.removeLast())
+            enter()
+        } // end if
+    } // end funct
     
 } // end of class
 
